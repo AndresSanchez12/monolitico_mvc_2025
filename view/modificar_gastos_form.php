@@ -1,5 +1,3 @@
-<!-- view/modificar_gasto_form.php -->
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -8,28 +6,29 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Modificar Gasto</h1>
+    <div class="container">
+        <h1>Modificar Gasto</h1>
 
-    <form action="index.php?accion=modificar_gasto" method="post">
-        <label>Categoría Actual:</label>
-        <input type="text" name="categoria_actual" required><br><br>
+        <form action="index.php?accion=modificar_gasto" method="post">
+            <input type="hidden" name="id" value="<?php echo $gasto['id']; ?>">
 
-        <label>Mes:</label>
-        <input type="text" name="mes" required><br><br>
+            <label for="categoria">Categoría:</label>
+            <select name="nueva_categoria" id="categoria" required>
+                <?php foreach ($categorias as $categoria): ?>
+                    <option value="<?php echo $categoria['id']; ?>" <?php echo ($categoria['id'] == $gasto['idCategory']) ? 'selected' : ''; ?>>
+                        <?php echo htmlspecialchars($categoria['name']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select><br><br>
 
-        <label>Año:</label>
-        <input type="number" name="anio" required><br><br>
+            <label for="nuevo_valor">Nuevo Valor del Gasto:</label>
+            <input type="number" name="nuevo_valor" id="nuevo_valor" required min="1" step="0.01" value="<?php echo $gasto['value']; ?>"><br><br>
 
-        <label>Nueva Categoría:</label>
-        <input type="text" name="nueva_categoria" required><br><br>
+            <button type="submit" class="btn">Actualizar Gasto</button>
+        </form>
 
-        <label>Nuevo Valor del Gasto:</label>
-        <input type="number" name="nuevo_valor" required><br><br>
-
-        <button type="submit">Actualizar Gasto</button>
-    </form>
-    <br><br>
-<a href="index.php" class="btn-volver">⬅ Volver al Menú</a>
-
+        <br>
+        <a href="index.php" class="btn-volver">⬅ Volver al Menú</a>
+    </div>
 </body>
 </html>

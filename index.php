@@ -1,21 +1,17 @@
 <?php
-// index.php
-session_start(); // Importante para usar $_SESSION
+session_start();
 
-// Incluir todos los controladores
 require_once 'config/db.php';
 require_once 'controller/IngresoController.php';
 require_once 'controller/CategoriaController.php';
 require_once 'controller/GastoController.php';
 require_once 'controller/ReporteController.php';
 
-// Crear instancias de los controladores
 $controladorIngreso = new IngresoController();
 $controladorCategoria = new CategoriaController();
 $controladorGasto = new GastoController();
 $controladorReporte = new ReporteController();
 
-// Detectar acción en la URL
 if (isset($_GET['accion'])) {
 
     // ========== INGRESOS ==========
@@ -34,8 +30,9 @@ if (isset($_GET['accion'])) {
         $nuevoValor = $_POST['nuevo_valor'];
         $controladorIngreso->modificarIngreso($mes, $anio, $nuevoValor);
 
-    } elseif ($_GET['accion'] == 'form_modificar_ingreso') {
-        require_once 'view/modificar_ingreso_form.php';
+    } elseif ($_GET['accion'] == 'eliminar_ingreso' && isset($_GET['id'])) {
+        $id = $_GET['id'];
+        $controladorIngreso->eliminarIngreso($id);
 
     } elseif ($_GET['accion'] == 'lista_ingresos') {
         $ingresos = $controladorIngreso->listarIngresos();
@@ -50,12 +47,23 @@ if (isset($_GET['accion'])) {
         $porcentaje = $_POST['porcentaje'];
         $controladorCategoria->registrarCategoria($nombre, $porcentaje);
 
+    } elseif ($_GET['accion'] == 'modificar_categoria' && $_SERVER['REQUEST_METHOD'] == 'POST') {
+        $id = $_POST['id'];
+        $nuevoNombre = $_POST['nombre'];
+        $nuevoPorcentaje = $_POST['porcentaje'];
+        $controladorCategoria->modificarCategoria($id, $nuevoNombre, $nuevoPorcentaje);
+
+    } elseif ($_GET['accion'] == 'eliminar_categoria' && isset($_GET['id'])) {
+        $id = $_GET['id'];
+        $controladorCategoria->eliminarCategoria($id);
+
     } elseif ($_GET['accion'] == 'lista_categorias') {
         $categorias = $controladorCategoria->listarCategorias();
         require_once 'view/lista_categorias.php';
 
     // ========== GASTOS ==========
     } elseif ($_GET['accion'] == 'form_gasto') {
+        $categorias = $controladorCategoria->listarCategorias();
         require_once 'view/gasto_form.php';
 
     } elseif ($_GET['accion'] == 'registrar_gasto' && $_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -65,18 +73,19 @@ if (isset($_GET['accion'])) {
         $valor = $_POST['valor'];
         $controladorGasto->registrarGasto($categoria, $mes, $anio, $valor);
 
-    } elseif ($_GET['accion'] == 'lista_gastos') {
-        $gastos = $controladorGasto->listarGastos();
-        require_once 'view/lista_gastos.php';
-
-    } elseif ($_GET['accion'] == 'form_modificar_gasto') {
-        require_once 'view/modificar_gasto_form.php';
-
     } elseif ($_GET['accion'] == 'modificar_gasto' && $_SERVER['REQUEST_METHOD'] == 'POST') {
         $id = $_POST['id'];
         $nuevaCategoria = $_POST['nueva_categoria'];
         $nuevoValor = $_POST['nuevo_valor'];
         $controladorGasto->modificarGasto($id, $nuevaCategoria, $nuevoValor);
+
+    } elseif ($_GET['accion'] == 'eliminar_gasto' && isset($_GET['id'])) {
+        $id = $_GET['id'];
+        $controladorGasto->eliminarGasto($id);
+
+    } elseif ($_GET['accion'] == 'lista_gastos') {
+        $gastos = $controladorGasto->listarGastos();
+        require_once 'view/lista_gastos.php';
 
     // ========== REPORTE ==========
     } elseif ($_GET['accion'] == 'form_reporte') {
@@ -86,15 +95,9 @@ if (isset($_GET['accion'])) {
         $mes = $_POST['mes'];
         $anio = $_POST['anio'];
         $reporteData = $controladorReporte->generarReporte($mes, $anio);
-
-        if ($reporteData) {
-            require_once 'view/reporte_resultado.php';
-        } else {
-            echo "No existe un reporte para ese mes y año.";
-        }
+        require_once 'view/reporte_resultado.php';
     }
 
 } else {
-    // Si no hay acción, mostrar el menú principal
     require_once 'view/menu.php';
 }

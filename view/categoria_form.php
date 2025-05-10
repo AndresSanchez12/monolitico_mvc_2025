@@ -6,19 +6,21 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Registrar Nueva Categoría</h1>
+    <div class="container">
+        <h1>Registrar Nueva Categoría</h1>
 
-    <form action="index.php?accion=registrar_categoria" method="post">
-        <label>Nombre de la Categoría:</label>
-        <input type="text" name="nombre" required><br><br>
+        <form action="index.php?accion=registrar_categoria" method="post">
+            <label for="nombre">Nombre de la Categoría:</label>
+            <input type="text" name="nombre" id="nombre" required><br><br>
 
-        <label>Porcentaje Permitido (%):</label>
-        <input type="number" name="porcentaje" step="0.01" required><br><br>
+            <label for="porcentaje">Porcentaje Permitido (%):</label>
+            <input type="number" name="porcentaje" id="porcentaje" required min="1" max="100" step="0.01"><br><br>
 
-        <button type="submit">Guardar Categoría</button>
-    </form>
+            <button type="submit" class="btn">Guardar Categoría</button>
+        </form>
 
-    <br>
-    <a href="index.php" class="btn-volver">⬅ Volver al Menú</a>
+        <br>
+        <a href="index.php" class="btn-volver">⬅ Volver al Menú</a>
+    </div>
 </body>
 </html>

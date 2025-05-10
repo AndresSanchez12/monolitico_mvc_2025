@@ -1,44 +1,39 @@
-<!-- view/lista_gastos.php -->
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Lista de Gastos</title>
+    <title>Gastos Registrados</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Gastos Registrados</h1>
+    <div class="container">
+        <h1>Gastos Registrados</h1>
 
-    <a href="index.php?accion=form_gasto">Registrar Nuevo Gasto</a> |
-    <a href="index.php?accion=form_modificar_gasto">Modificar Gasto</a><br><br>
+        <table class="table">
+            <tr>
+                <th>Categoría</th>
+                <th>Mes</th>
+                <th>Año</th>
+                <th>Valor</th>
+                <th>Acciones</th>
+            </tr>
 
-    <table border="1" cellpadding="10">
-        <tr>
-            <th>Categoría</th>
-            <th>Mes</th>
-            <th>Año</th>
-            <th>Valor</th>
-        </tr>
+            <?php foreach ($gastos as $gasto): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($gasto['name']); ?></td>
+                    <td><?php echo htmlspecialchars($gasto['month']); ?></td>
+                    <td><?php echo htmlspecialchars($gasto['year']); ?></td>
+                    <td>$<?php echo number_format($gasto['value'], 2); ?></td>
+                    <td>
+                        <a href="index.php?accion=form_modificar_gasto&id=<?php echo $gasto['id']; ?>" class="btn">✏️ Modificar</a>
+                        <a href="index.php?accion=eliminar_gasto&id=<?php echo $gasto['id']; ?>" class="btn">🗑️ Eliminar</a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
 
-        <?php
-        if (!empty($gastos)) {
-            foreach ($gastos as $gasto) {
-                echo "<tr>";
-                echo "<td>" . htmlspecialchars($gasto->categoria) . "</td>";
-                echo "<td>" . htmlspecialchars($gasto->mes) . "</td>";
-                echo "<td>" . htmlspecialchars($gasto->anio) . "</td>";
-                echo "<td>" . number_format($gasto->valor, 2) . "</td>";
-                echo "</tr>";
-            }
-        } else {
-            echo "<tr><td colspan='4'>No hay gastos registrados.</td></tr>";
-        }
-        ?>
-    </table>
-
-    <br><br>
-<a href="index.php" class="btn-volver">⬅ Volver al Menú</a>
-
+        <br>
+        <a href="index.php" class="btn-volver">⬅ Volver al Menú</a>
+    </div>
 </body>
 </html>
