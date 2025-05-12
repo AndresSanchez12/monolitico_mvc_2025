@@ -4,38 +4,43 @@ require_once 'model/Ingreso.php';
 class IngresoController {
 
     public function registrarIngreso($mes, $anio, $valor) {
-        // Primero, buscamos el reporte correspondiente
-        $pdo = getConnection();
-        $stmt = $pdo->prepare("SELECT id FROM reports WHERE month = ? AND year = ?");
-        $stmt->execute([$mes, $anio]);
-        $report = $stmt->fetch();
-
-        if ($report) {
-            $idReport = $report['id'];
-            $ingreso = new Ingreso($valor, $idReport);
-            $ingreso->save();
+        $ingreso = new Ingreso($valor, $mes, $anio);
+        if ($ingreso->save()) {
             echo "Ingreso registrado correctamente.";
         } else {
-            echo "Error: No existe un reporte para ese mes y año.";
+            echo "Error al registrar el ingreso.";
         }
     }
 
-    public function modificarIngreso($mes, $anio, $nuevoValor) {
-        $pdo = getConnection();
-        $stmt = $pdo->prepare("SELECT i.id FROM income i INNER JOIN reports r ON i.idReport = r.id WHERE r.month = ? AND r.year = ?");
-        $stmt->execute([$mes, $anio]);
-        $ingreso = $stmt->fetch();
-
+    public function modificarIngreso($id, $nuevoValor) {
+        $ingreso = Ingreso::getById($id);
         if ($ingreso) {
-            $ingresoObj = new Ingreso($nuevoValor, null, $ingreso['id']);
-            $ingresoObj->update();
-            echo "Ingreso actualizado correctamente.";
+            $ingreso->value = (float) $nuevoValor;
+            if ($ingreso->update()) {
+                echo "Ingreso actualizado correctamente en la base de datos.";
+            } else {
+                echo "Error al actualizar el ingreso en la base de datos.";
+            }
         } else {
-            echo "Error: No se encontró ingreso para ese mes y año.";
+            echo "Ingreso no encontrado.";
+        }
+    }
+
+    public function eliminarIngreso($id) {
+        if (Ingreso::delete($id)) {
+            echo "Ingreso eliminado correctamente de la base de datos.";
+        } else {
+            echo "Error al eliminar el ingreso en la base de datos.";
         }
     }
 
     public function listarIngresos() {
-        return Ingreso::getAll();
+        $ingresos = Ingreso::getAll();
+        foreach ($ingresos as &$ingreso) {
+            $ingreso['value'] = (float) $ingreso['value'];
+            $ingreso['month'] = $ingreso['month'] ?? 'Mes no definido';
+            $ingreso['year'] = $ingreso['year'] ?? 'Año no definido';
+        }
+        return $ingresos;
     }
 }
